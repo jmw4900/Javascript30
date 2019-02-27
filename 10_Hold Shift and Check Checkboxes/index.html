@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hold Shift to Check Multiple Checkboxes</title>
+</head>
+
+<body>
+  <style>
+
+    html {
+      font-family: sans-serif;
+      background: #ffc600;
+    }
+
+    .inbox {
+      max-width: 400px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #F1F1F1;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    input:checked + label {
+      background: #F9F9F9;
+      text-decoration: line-through;
+    }
+
+    input[type="checkbox"] {
+      margin: 20px;
+      transform: scale(1.5);
+    }
+
+    label {
+      margin: 0;
+      padding: 20px;
+      transition: background 0.2s;
+      flex: 1;
+      font-family:'helvetica neue';
+      font-size: 20px;
+      font-weight: 200;
+      border-left: 1px solid #D1E2FF;
+      user-select: none;
+    }
+  </style>
+  <!--
+   The following is a common layout you would see in an email client.
+
+   When a user clicks a checkbox, holds Shift, and then clicks another checkbox a few rows down, all the checkboxes inbetween those two checkboxes should be checked.
+
+  -->
+  <div class="inbox">
+    <div class="item">
+      <input type="checkbox" id="box1">
+      <label for="box1">This is an inbox layout.</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box2">
+      <label for="box2">Check one item</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box3">
+      <label for="box3">Hold down your Shift key</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box4">
+      <label for="box4">Check a lower item</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box5">
+      <label for="box5">Everything in between should also be set to checked</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box6">
+      <label for="box6">Try do it with out any libraries</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box7">
+      <label for="box7">Just regular JavaScript</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box8">
+      <label for="box8">Good Luck!</label>
+    </div>
+    <div class="item">
+      <input type="checkbox" id="box9">
+      <label for="box9">Don't forget to tweet your result!</label>
+    </div>
+  </div>
+
+  <script>
+    const checkboxes = document.querySelectorAll('input');
+    let lastChecked;
+
+    function handleCheck(e) {
+      let inChecked = false;
+
+      if (e.shiftKey && this.checked) {
+        inChecked = false;
+        console.log(lastChecked)
+
+        checkboxes.forEach(checkbox => {
+          if (checkbox === this || checkbox === lastChecked) {
+            inChecked = !inChecked;
+          }
+
+          if (inChecked) {
+            checkbox.checked = true;
+          }
+        });
+      } else if (e.shiftKey && !this.checked) {
+        inChecked = true;
+
+        checkboxes.forEach((checkbox, index) => {
+          if (checkbox === this) {
+            inChecked = !inChecked;
+          }
+
+          if (inChecked) {
+            checkbox.checked = false;
+          }
+
+          if (!inChecked && checkbox.checked) {
+            lastChecked = checkbox;
+          }
+        });
+      } else {
+        lastChecked = this;
+      }      
+    }
+
+    let isMouseDown = false;
+
+    function handleMove(e) {
+      let mouse = e.type;
+      
+      if (mouse === 'mouseup') {
+        isMouseDown = false;
+      } else if (mouse === 'mousedown') {
+        isMouseDown = true;
+      }
+      
+      if (isMouseDown && mouse === 'mouseover' || mouse === 'mousedown') {
+        this.checked = !this.checked;
+      }
+    }
+
+    checkboxes.forEach(checkbox => checkbox.addEventListener('click', handleCheck));
+    checkboxes.forEach(checkbox => checkbox.addEventListener('mouseover', handleMove));
+    checkboxes.forEach(checkbox => checkbox.addEventListener('mousedown', handleMove));
+    window.addEventListener('mouseup', handleMove);
+
+  </script>
+</body>
+
+</html>
